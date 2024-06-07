@@ -4,7 +4,7 @@ namespace payment_service_provider.Data.Repositories;
 
 public interface IPayableRepository
 {
-    void Create(Payable payable);
+    bool Create(Payable payable);
     IEnumerable<Payable> ListPaidPayables();
     IEnumerable<Payable> ListWaitingFundsPayables();
     decimal TotalValuePaidPayables();

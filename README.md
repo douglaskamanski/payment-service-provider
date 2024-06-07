@@ -15,14 +15,36 @@ Também tem o intuito de estudo, desenvolvimento profissional e registro de minh
 * Entity Framework para persistência de dados;
 * SQL Server como banco de dados relacional;
 * Swagger para documentação dos endpoints da API;
-* AutoMapper para transformar os retornos em DTOs.
+* AutoMapper para transformar os retornos em DTOs;
+* Moq, xUnit e FluentAssertions para testes.
 ### Ferramentas para desenvolvimento e testes <h3>
 * Microsoft Visual Studio 2022 Community;
 * SQL Server ObjectExplorer como gerenciador de bando de dados;
-* Postman e Swagger para testes manuais.
-### Como executar o projeto <h3>
+* Postman e Swagger para testes manuais;
+* xUnit para testes automatizados.
+### Como executar o projeto no Visual Studio 2022 <h3>
+* Baixar o projeto no seu computador;
+* Executar o comando "Update-Database CreateTable" no Package Manager Console do Visual Studio para criar as tabelas;
+* Executar o projeto. <p>
+Via Swagger os endpoints estão disponíveis no endereço https://localhost:7216/swagger/index.html. <br>
+Com Postman na URL https://localhost:7216/. <p>
+Os endpoints com verbo GET não possuem corpo e são os seguintes: <br>
+<b>/api/Payable/list-paid-payables</b> <br>
+<b>/api/Payable/list-waiting-funds-payables</b> <br>
+<b>/api/Payable/total-values-payables</b> <br>
+<b>/api/Transaction/list-all-transactions</b> <p>
+O único endpoint com verbo POST é o <b>/api/Payment/payment</b> e recebe parâmetros no seguinte esquema: <br>
+{
+  "value": 200.50,
+  "description": "Compra crédito loja Maria Jaona",
+  "paymentMethod": 1,
+  "cardNumbers": "954012640209671",
+  "cardName": "ISABELLA FARIAS",
+  "cardExpirationDate": "2027-11-01",
+  "cardCvv": "0060"
+}
 
-<br>
+<p>
 <h1 align="center">
   <img alt="Payment Service Provider" src=".github/preview.png" width="100%">
 </h1>

@@ -23,8 +23,12 @@ public class PaymentController : ControllerBase
     [HttpPost("payment")]
     public IActionResult Payment(CreatePaymentDto createPaymentDto)
     {
-        _paymentService.CreatePayment(createPaymentDto);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        return Created();
+        if (_paymentService.CreatePayment(createPaymentDto))
+            return NoContent();
+        else
+            return BadRequest();
     }
 }

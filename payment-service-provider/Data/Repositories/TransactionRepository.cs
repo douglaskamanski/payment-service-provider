@@ -11,10 +11,19 @@ public class TransactionRepository : ITransactionRepository
         _context = context; 
     }
 
-    public void Create(Transaction transaction)
+    public bool Create(Transaction transaction)
     {
-        _context.Transactions.Add(transaction);
-        _context.SaveChanges();
+        try
+        {
+            _context.Transactions.Add(transaction);
+            _context.SaveChanges();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new ArgumentException($"Create transaction failed: {ex.Message}");
+        }
     }
 
     public IEnumerable<Transaction> ListAll()

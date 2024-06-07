@@ -4,6 +4,7 @@ using payment_service_provider.Dtos;
 using payment_service_provider.Enums;
 using payment_service_provider.Models;
 using payment_service_provider.ValueObjects;
+using System.ComponentModel.DataAnnotations;
 
 namespace payment_service_provider.Services;
 
@@ -20,8 +21,17 @@ public class PaymentService : IPaymentService
         _computeFee = computeFee;
     }
 
-    public void CreatePayment(CreatePaymentDto createPaymentDto)
+    public bool CreatePayment(CreatePaymentDto createPaymentDto)
     {
+        try
+        {
+            Validator.ValidateObject(createPaymentDto, new ValidationContext(createPaymentDto), true);
+        }
+        catch (ValidationException ex)
+        {
+            throw new ArgumentException(ex.Message, nameof(createPaymentDto));
+        }
+
         Transaction transaction = new()
         {
             Value = createPaymentDto.Value,
@@ -29,8 +39,6 @@ public class PaymentService : IPaymentService
             PaymentMethod = createPaymentDto.PaymentMethod,
             Card = Card.Create(createPaymentDto.CardNumbers.Substring(createPaymentDto.CardNumbers.Length - 4), createPaymentDto.CardName, createPaymentDto.CardExpirationDate, createPaymentDto.CardCvv)
         };
-
-        _transactionRepository.Create(transaction);
 
         Payable payable = new();
 
@@ -47,6 +55,6 @@ public class PaymentService : IPaymentService
             payable.PaymentDate = DateTime.Now.AddDays(30);
         }
 
-        _payableRepository.Create(payable);
+        return (_transactionRepository.Create(transaction) && _payableRepository.Create(payable));
     }
 }

@@ -27,12 +27,10 @@ public class PayableService : IPayableService
 
     public ReadTotalValuesPayablesDto TotalValuesPayables()
     {
-        ReadTotalValuesPayablesDto readTotalValuesPayablesDto = new()
+        return new()
         {
             TotalValuePaid = _payableRepository.TotalValuePaidPayables(),
             TotalValueWaitingFunds = _payableRepository.TotalValueWaitingFundsPayables()
         };
-        
-        return readTotalValuesPayablesDto;
     }
 }

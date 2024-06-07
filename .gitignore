@@ -6,9 +6,6 @@
 # Personal notes
 Annotations.txt
 
-# Tests Folder
-payment-service-provider.tests/
-
 # User-specific files
 *.rsuser
 *.suo

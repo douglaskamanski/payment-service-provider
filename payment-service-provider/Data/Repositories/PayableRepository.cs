@@ -12,10 +12,19 @@ public class PayableRepository : IPayableRepository
         _context = context;
     }
 
-    public void Create(Payable payable)
+    public bool Create(Payable payable)
     {
-        _context.Payables.Add(payable);
-        _context.SaveChanges();
+        try
+        {
+            _context.Payables.Add(payable);
+            _context.SaveChanges();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new ArgumentException($"Create payable failed: {ex.Message}");
+        }
     }
 
     public IEnumerable<Payable> ListPaidPayables()

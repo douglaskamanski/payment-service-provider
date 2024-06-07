@@ -43,7 +43,7 @@ public class PayableController : ControllerBase
     /// <returns>Two decimal values with TotalValuePaid and TotalValueWaitingFunds</returns>
     /// <response code="200">Return values with successfully</response>
     [HttpGet("total-values-payables")]
-    public ActionResult<ReadTotalValuesPayablesDto> TotalValuesdPayables()
+    public ActionResult<ReadTotalValuesPayablesDto> TotalValuesPayables()
     {
         return Ok(_payableService.TotalValuesPayables());
     }
