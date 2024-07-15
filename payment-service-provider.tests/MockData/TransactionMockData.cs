@@ -6,9 +6,9 @@ namespace payment_service_provider.tests.MockData;
 
 public class TransactionMockData
 {
-    public static IEnumerable<ReadTransactionDto> ListAllTransactionsDtoMockData()
+    public static Response<IEnumerable<ReadTransactionDto>> ListAllTransactionsDtoMockData()
     {
-        return new List<ReadTransactionDto>
+        var list = new List<ReadTransactionDto>
         {
             new ReadTransactionDto {
                 Value = 7490.25m,
@@ -31,6 +31,15 @@ public class TransactionMockData
                 CreatedDate = DateTime.Now
             }
         };
+
+        Response<IEnumerable<ReadTransactionDto>> response = new()
+        {
+            Success = true,
+            Message = "List all transactions created.",
+            Data = list
+        };
+        
+        return response;
     }
 
     public static IEnumerable<Transaction> ListAllTransactionsMockData()

@@ -1,13 +1,14 @@
 ﻿using payment_service_provider.Dtos;
 using payment_service_provider.Models;
+using System.Collections.Generic;
 
 namespace payment_service_provider.tests.MockData;
 
 public class PayableMockData
 {
-    public static IEnumerable<ReadPayableDto> ListPaidPayablesDtoMockData()
+    public static Response<IEnumerable<ReadPayableDto>> ListPaidPayablesDtoMockData()
     {
-        return new List<ReadPayableDto> {
+        var list = new List<ReadPayableDto> {
             new ReadPayableDto {
                 Value = 660.50m,
                 Status = Enums.PaymentStatus.Paid,
@@ -24,11 +25,20 @@ public class PayableMockData
                 PaymentDate = DateTime.Parse("25/02/2023")
             }
         };
+
+        Response<IEnumerable<ReadPayableDto>> response = new()
+        {
+            Success = true,
+            Message = "List all paid payables.",
+            Data = list
+        };
+
+        return response;
     }
 
-    public static IEnumerable<ReadPayableDto> ListWaitingFundsPayablesDtoMockData()
+    public static Response<IEnumerable<ReadPayableDto>> ListWaitingFundsPayablesDtoMockData()
     {
-        return new List<ReadPayableDto> {
+        var list = new List<ReadPayableDto> {
             new ReadPayableDto {
                 Value = 770.70m,
                 Status = Enums.PaymentStatus.WaitingFunds,
@@ -45,15 +55,33 @@ public class PayableMockData
                 PaymentDate = DateTime.Parse("19/06/2023")
             }
         };
+
+        Response<IEnumerable<ReadPayableDto>> response = new()
+        {
+            Success = true,
+            Message = "List all waiting funds payables.",
+            Data = list
+        };
+
+        return response;
     }
 
-    public static ReadTotalValuesPayablesDto TotalValuesPayablesDtoMockData()
+    public static Response<ReadTotalValuesPayablesDto> TotalValuesPayablesDtoMockData()
     {
-        return new ReadTotalValuesPayablesDto
+        var totalValue = new ReadTotalValuesPayablesDto
         {
             TotalValuePaid = 999.10m,
             TotalValueWaitingFunds = 1560.85m
         };
+
+        Response<ReadTotalValuesPayablesDto> response = new()
+        {
+            Success = true,
+            Message = "Total values of paid and waiting funds payables.",
+            Data = totalValue
+        };
+
+        return response;
     }
 
     public static IEnumerable<Payable> ListPaidPayablesMockData()

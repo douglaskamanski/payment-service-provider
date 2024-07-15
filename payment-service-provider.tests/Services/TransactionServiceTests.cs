@@ -10,13 +10,13 @@ namespace payment_service_provider.tests.Services;
 public class TransactionServiceTests
 {   
     [Fact(DisplayName = "Service list all transactions")]
-    public void ListAllTransactionsSuccessfully()
+    public async Task ListAllTransactionsSuccessfully()
     {
         // Arrange
         var listAllTransactionMockData = TransactionMockData.ListAllTransactionsMockData();
 
         var transactionRepository = new Mock<ITransactionRepository>();
-        transactionRepository.Setup(x => x.ListAll()).Returns(listAllTransactionMockData);
+        transactionRepository.Setup(x => x.ListAll()).ReturnsAsync(listAllTransactionMockData);
 
         var autoMapperProfile = new TransactionProfile();
         var autoMapperConfig = new MapperConfiguration(x => x.AddProfile(autoMapperProfile));
@@ -25,9 +25,10 @@ public class TransactionServiceTests
         var sut = new TransactionService(transactionRepository.Object, autoMapper);
 
         // Act
-        var result = sut.ListAllTransactions();
+        var result = await sut.ListAllTransactions();
 
         // Assert
-        Assert.True(result.Count() > 0);
+        Assert.NotNull(result);
+        Assert.True(result.Data.Any());
     }
 }

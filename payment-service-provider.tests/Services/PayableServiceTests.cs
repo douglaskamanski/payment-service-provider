@@ -4,19 +4,21 @@ using payment_service_provider.Data.Repositories;
 using payment_service_provider.tests.MockData;
 using payment_service_provider.Profiles;
 using payment_service_provider.Services;
+using payment_service_provider.Models;
+using payment_service_provider.Dtos;
 
 namespace payment_service_provider.tests.Services;
 
 public class PayableServiceTests
 {
     [Fact(DisplayName = "Service list paid payables")]
-    public void ListPaidPayablesSuccessfully()
+    public async Task ListPaidPayablesSuccessfully()
     {
         // Arrange
         var listPaidPayablesMockData = PayableMockData.ListPaidPayablesMockData;
 
         var payablesRepository = new Mock<IPayableRepository>();
-        payablesRepository.Setup(x => x.ListPaidPayables()).Returns(listPaidPayablesMockData);
+        payablesRepository.Setup(x => x.ListPaidPayables()).ReturnsAsync(listPaidPayablesMockData);
 
         var autoMapperProfile = new PayableProfile();
         var autoMapperConfig = new MapperConfiguration(x => x.AddProfile(autoMapperProfile));
@@ -25,20 +27,21 @@ public class PayableServiceTests
         var sut = new PayableService(payablesRepository.Object, autoMapper);
 
         // Act
-        var result = sut.ListPaidPayables();
+        var result = await sut.ListPaidPayables();
 
         // Assert
-        Assert.True(result.Count() > 0);
+        Assert.NotNull(result);
+        Assert.True(result.Data.Any());
     }
 
     [Fact(DisplayName = "Service list waiting funds payables")]
-    public void ListWaitingFundsPayablesSuccessfully()
+    public async Task ListWaitingFundsPayablesSuccessfully()
     {
         // Arrange
         var listWaitingFundsPayablesMockData = PayableMockData.ListWaitingFundsPayablesMockData;
 
         var payablesRepository = new Mock<IPayableRepository>();
-        payablesRepository.Setup(x => x.ListWaitingFundsPayables()).Returns(listWaitingFundsPayablesMockData);
+        payablesRepository.Setup(x => x.ListWaitingFundsPayables()).ReturnsAsync(listWaitingFundsPayablesMockData);
 
         var autoMapperProfile = new PayableProfile();
         var autoMapperConfig = new MapperConfiguration(x => x.AddProfile(autoMapperProfile));
@@ -47,14 +50,15 @@ public class PayableServiceTests
         var sut = new PayableService(payablesRepository.Object, autoMapper);
 
         // Act
-        var result = sut.ListWaitingFundsPayables();
+        var result = await sut.ListWaitingFundsPayables();
 
         // Assert
-        Assert.True(result.Count() > 0);
+        Assert.NotNull(result);
+        Assert.True(result.Data.Any());
     }
 
     [Fact(DisplayName = "Service return total values payables")]
-    public void TotalValuesPayablesSuccessfully()
+    public async Task TotalValuesPayablesSuccessfully()
     {
         // Arrange
         var totalValuePaidPayablesMockData = PayableMockData.TotalValuePaidPayablesMockData;
@@ -63,15 +67,16 @@ public class PayableServiceTests
         var autoMapper = new Mock<IMapper>();
 
         var payablesRepository = new Mock<IPayableRepository>();
-        payablesRepository.Setup(x => x.TotalValuePaidPayables()).Returns(totalValuePaidPayablesMockData);
-        payablesRepository.Setup(x => x.TotalValueWaitingFundsPayables()).Returns(totalValueWaitingFundsPayablesMockData);
+        payablesRepository.Setup(x => x.TotalValuePaidPayables()).ReturnsAsync(totalValuePaidPayablesMockData);
+        payablesRepository.Setup(x => x.TotalValueWaitingFundsPayables()).ReturnsAsync(totalValueWaitingFundsPayablesMockData);
 
         var sut = new PayableService(payablesRepository.Object, autoMapper.Object);
 
         // Act
-        var result = sut.TotalValuesPayables();
+        var result = await sut.TotalValuesPayables();
 
         // Assert
-        Assert.True(result.TotalValuePaid > 0 && result.TotalValueWaitingFunds > 0);
+        Assert.NotNull(result);
+        Assert.True(result.Data.TotalValuePaid > 0 && result.Data.TotalValueWaitingFunds > 0);
     }
 }
