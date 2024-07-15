@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using payment_service_provider.Data.Repositories;
 using payment_service_provider.Dtos;
+using payment_service_provider.Models;
 
 namespace payment_service_provider.Services;
 
@@ -15,22 +16,49 @@ public class PayableService : IPayableService
         _mapper = mapper;
     }
 
-    public IEnumerable<ReadPayableDto> ListPaidPayables()
+    public async Task<Response<IEnumerable<ReadPayableDto>>> ListPaidPayables()
     {
-        return _mapper.Map<List<ReadPayableDto>>(_payableRepository.ListPaidPayables());
-    }
+        var listPaidPayablesDto = _mapper.Map<List<ReadPayableDto>>(await _payableRepository.ListPaidPayables());
 
-    public IEnumerable<ReadPayableDto> ListWaitingFundsPayables()
-    {
-        return _mapper.Map<List<ReadPayableDto>>(_payableRepository.ListWaitingFundsPayables());
-    }
-
-    public ReadTotalValuesPayablesDto TotalValuesPayables()
-    {
-        return new()
+        Response<IEnumerable<ReadPayableDto>> response = new()
         {
-            TotalValuePaid = _payableRepository.TotalValuePaidPayables(),
-            TotalValueWaitingFunds = _payableRepository.TotalValueWaitingFundsPayables()
+            Success = true,
+            Message = "List all paid payables.",
+            Data = listPaidPayablesDto
         };
+
+        return response;
+    }
+
+    public async Task<Response<IEnumerable<ReadPayableDto>>> ListWaitingFundsPayables()
+    {
+        var listWaitingFundsPayables = _mapper.Map<List<ReadPayableDto>>(await _payableRepository.ListWaitingFundsPayables());
+
+        Response<IEnumerable<ReadPayableDto>> response = new()
+        {
+            Success = true,
+            Message = "List all waiting funds payables.",
+            Data = listWaitingFundsPayables
+        };
+
+        return response;
+    }
+
+    public async Task<Response<ReadTotalValuesPayablesDto>> TotalValuesPayables()
+    {
+        ReadTotalValuesPayablesDto readTotalValuesPayablesDto = new()
+        {
+            TotalValuePaid = await _payableRepository.TotalValuePaidPayables(),
+            TotalValueWaitingFunds = await _payableRepository.TotalValueWaitingFundsPayables()
+        };
+
+        Response<ReadTotalValuesPayablesDto> response = new()
+        {
+            Success = true,
+            Message = "Total values of paid and waiting funds payables.",
+            Data = readTotalValuesPayablesDto
+        };
+
+        return response;
     }
 }

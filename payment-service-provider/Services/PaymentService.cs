@@ -1,4 +1,5 @@
-﻿using payment_service_provider.Data.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using payment_service_provider.Data.Repositories;
 using payment_service_provider.Domain.Fees;
 using payment_service_provider.Dtos;
 using payment_service_provider.Enums;
@@ -21,15 +22,21 @@ public class PaymentService : IPaymentService
         _computeFee = computeFee;
     }
 
-    public bool CreatePayment(CreatePaymentDto createPaymentDto)
+    public async Task<Response<CreatePaymentDto>> CreatePayment(CreatePaymentDto createPaymentDto)
     {
+        Response<CreatePaymentDto> response = new();
+
         try
         {
             Validator.ValidateObject(createPaymentDto, new ValidationContext(createPaymentDto), true);
         }
         catch (ValidationException ex)
         {
-            throw new ArgumentException(ex.Message, nameof(createPaymentDto));
+            response.Success = false;
+            response.Message = $"Parameter validation exception: {ex.Message}";
+            response.Data = createPaymentDto;
+
+            return response;
         }
 
         Transaction transaction = new()
@@ -37,8 +44,32 @@ public class PaymentService : IPaymentService
             Value = createPaymentDto.Value,
             Description = createPaymentDto.Description,
             PaymentMethod = createPaymentDto.PaymentMethod,
-            Card = Card.Create(createPaymentDto.CardNumbers.Substring(createPaymentDto.CardNumbers.Length - 4), createPaymentDto.CardName, createPaymentDto.CardExpirationDate, createPaymentDto.CardCvv)
         };
+
+        try
+        {
+            transaction.Card = Card.Create(createPaymentDto.CardNumbers.Substring(createPaymentDto.CardNumbers.Length - 4), createPaymentDto.CardName, createPaymentDto.CardExpirationDate, createPaymentDto.CardCvv);
+        } catch (ArgumentException ex) 
+        {
+            response.Success = false;
+            response.Message = $"Card validation exception: {ex.Message}";
+            response.Data = createPaymentDto;
+
+            return response;
+        }
+
+        try
+        {
+            await _transactionRepository.Create(transaction);
+        }
+        catch (DbUpdateException ex)
+        {
+            response.Success = false;
+            response.Message = $"Create transaction failed: {ex.Message}";
+            response.Data = createPaymentDto;
+
+            return response;
+        }
 
         Payable payable = new();
 
@@ -55,6 +86,23 @@ public class PaymentService : IPaymentService
             payable.PaymentDate = DateTime.Now.AddDays(30);
         }
 
-        return (_transactionRepository.Create(transaction) && _payableRepository.Create(payable));
+        try
+        {
+            await _payableRepository.Create(payable);
+        }
+        catch (DbUpdateException ex)
+        {
+            response.Success = false;
+            response.Message = $"Create payable failed: {ex.Message}";
+            response.Data = createPaymentDto;
+
+            return response;
+        }
+
+        response.Success = true;
+        response.Message = "Create payment successfully.";
+        response.Data = null;
+
+        return response;
     }
 }

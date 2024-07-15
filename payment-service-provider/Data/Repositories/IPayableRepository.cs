@@ -4,9 +4,9 @@ namespace payment_service_provider.Data.Repositories;
 
 public interface IPayableRepository
 {
-    bool Create(Payable payable);
-    IEnumerable<Payable> ListPaidPayables();
-    IEnumerable<Payable> ListWaitingFundsPayables();
-    decimal TotalValuePaidPayables();
-    decimal TotalValueWaitingFundsPayables();
+    Task<int> Create(Payable payable);
+    Task<IEnumerable<Payable>> ListPaidPayables();
+    Task<IEnumerable<Payable>> ListWaitingFundsPayables();
+    Task<decimal> TotalValuePaidPayables();
+    Task<decimal> TotalValueWaitingFundsPayables();
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using payment_service_provider.Dtos;
+using payment_service_provider.Models;
 using payment_service_provider.Services;
 
 namespace payment_service_provider.Controllers;
@@ -21,9 +22,11 @@ public class PayableController : ControllerBase
     /// <returns>List of paid payables with Value, Status and PaymentDate</returns>
     /// <response code="200">Successfully listed</response>
     [HttpGet("list-paid-payables")]
-    public ActionResult<IEnumerable<ReadPayableDto>> ListPaidPayables()
+    public async Task<ActionResult<Response<IEnumerable<ReadPayableDto>>>> ListPaidPayables()
     {
-        return Ok(_payableService.ListPaidPayables());
+        var response = await _payableService.ListPaidPayables();
+
+        return Ok(response);
     }
 
     /// <summary>
@@ -32,9 +35,11 @@ public class PayableController : ControllerBase
     /// <returns>List of waiting funds payables with Value, Status and PaymentDate</returns>
     /// <response code="200">Successfully listed</response>
     [HttpGet("list-waiting-funds-payables")]
-    public ActionResult<IEnumerable<ReadPayableDto>> ListWaitingFundsPayables()
+    public async Task<ActionResult<Response<IEnumerable<ReadPayableDto>>>> ListWaitingFundsPayables()
     {
-        return Ok(_payableService.ListWaitingFundsPayables());
+        var response = await _payableService.ListWaitingFundsPayables();
+
+        return Ok(response);
     }
 
     /// <summary>
@@ -43,8 +48,10 @@ public class PayableController : ControllerBase
     /// <returns>Two decimal values with TotalValuePaid and TotalValueWaitingFunds</returns>
     /// <response code="200">Return values with successfully</response>
     [HttpGet("total-values-payables")]
-    public ActionResult<ReadTotalValuesPayablesDto> TotalValuesPayables()
+    public async Task<ActionResult<Response<ReadTotalValuesPayablesDto>>> TotalValuesPayables()
     {
-        return Ok(_payableService.TotalValuesPayables());
+        var response = await _payableService.TotalValuesPayables();
+
+        return Ok(response);
     }
 }

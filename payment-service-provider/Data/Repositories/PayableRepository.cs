@@ -1,4 +1,5 @@
-﻿using payment_service_provider.Enums;
+﻿using Microsoft.EntityFrameworkCore;
+using payment_service_provider.Enums;
 using payment_service_provider.Models;
 
 namespace payment_service_provider.Data.Repositories;
@@ -12,38 +13,38 @@ public class PayableRepository : IPayableRepository
         _context = context;
     }
 
-    public bool Create(Payable payable)
+    public async Task<int> Create(Payable payable)
     {
         try
         {
-            _context.Payables.Add(payable);
-            _context.SaveChanges();
+            await _context.Payables.AddAsync(payable);
+            await _context.SaveChangesAsync();
 
-            return true;
+            return payable.Id;
         }
-        catch (Exception ex)
+        catch (DbUpdateException)
         {
-            throw new ArgumentException($"Create payable failed: {ex.Message}");
+            throw;
         }
     }
 
-    public IEnumerable<Payable> ListPaidPayables()
+    public async Task<IEnumerable<Payable>> ListPaidPayables()
     {
-        return _context.Payables.Where(p => p.Status == PaymentStatus.Paid).ToList();
+        return await _context.Payables.Where(p => p.Status == PaymentStatus.Paid).ToListAsync();
     }
 
-    public IEnumerable<Payable> ListWaitingFundsPayables()
+    public async Task<IEnumerable<Payable>> ListWaitingFundsPayables()
     {
-        return _context.Payables.Where(p => p.Status == PaymentStatus.WaitingFunds).ToList();
+        return await _context.Payables.Where(p => p.Status == PaymentStatus.WaitingFunds).ToListAsync();
     }
 
-    public decimal TotalValuePaidPayables()
+    public async Task<decimal> TotalValuePaidPayables()
     {
-        return _context.Payables.Where(p => p.Status == PaymentStatus.Paid).Sum(p => p.Value);
+        return await _context.Payables.Where(p => p.Status == PaymentStatus.Paid).SumAsync(p => p.Value);
     }
 
-    public decimal TotalValueWaitingFundsPayables()
+    public async Task<decimal> TotalValueWaitingFundsPayables()
     {
-        return _context.Payables.Where(p => p.Status == PaymentStatus.WaitingFunds).Sum(p => p.Value);
+        return await _context.Payables.Where(p => p.Status == PaymentStatus.WaitingFunds).SumAsync(p => p.Value);
     }
 }

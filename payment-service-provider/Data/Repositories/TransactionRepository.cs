@@ -1,4 +1,5 @@
-﻿using payment_service_provider.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using payment_service_provider.Models;
 
 namespace payment_service_provider.Data.Repositories;
 
@@ -11,23 +12,23 @@ public class TransactionRepository : ITransactionRepository
         _context = context; 
     }
 
-    public bool Create(Transaction transaction)
+    public async Task<int> Create(Transaction transaction)
     {
         try
         {
-            _context.Transactions.Add(transaction);
-            _context.SaveChanges();
+            await _context.Transactions.AddAsync(transaction);
+            await _context.SaveChangesAsync();
 
-            return true;
+            return transaction.Id;
         }
-        catch (Exception ex)
+        catch (DbUpdateException)
         {
-            throw new ArgumentException($"Create transaction failed: {ex.Message}");
+            throw;
         }
     }
 
-    public IEnumerable<Transaction> ListAll()
+    public async Task<IEnumerable<Transaction>> ListAll()
     {
-        return _context.Transactions.ToList();
+        return await _context.Transactions.ToListAsync();
     }
 }

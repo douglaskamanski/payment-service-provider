@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using payment_service_provider.Data.Repositories;
 using payment_service_provider.Dtos;
+using payment_service_provider.Models;
 
 namespace payment_service_provider.Services;
 
@@ -15,8 +16,17 @@ public class TransactionService : ITransactionService
         _mapper = mapper;
     }
 
-    public IEnumerable<ReadTransactionDto> ListAllTransactions()
+    public async Task<Response<IEnumerable<ReadTransactionDto>>> ListAllTransactions()
     {
-        return _mapper.Map<List<ReadTransactionDto>>(_transactionRepository.ListAll());
+        var listAllTransactions = _mapper.Map<List<ReadTransactionDto>>(await _transactionRepository.ListAll());
+
+        Response<IEnumerable<ReadTransactionDto>> response = new()
+        {
+            Success = true,
+            Message = "List all transactions created.",
+            Data = listAllTransactions
+        };
+
+        return response;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using payment_service_provider.Dtos;
+using payment_service_provider.Models;
 using payment_service_provider.Services;
 
 namespace payment_service_provider.Controllers;
@@ -18,17 +19,24 @@ public class PaymentController : ControllerBase
     /// <summary>
     /// Create payment
     /// </summary>
-    /// <param name="createPaymentDto">value - transaction value, description - transaction description, paymentMethod - payment method, cardNumbers - card numbers, cardName - card carrier name, cardExpirationDate - card expiration date and cardCvv - card verification value (CVV)</param>
-    /// <response code="204">Successfully created</response>
+    /// <param name="createPaymentDto">value - transaction value, description - transaction description, paymentMethod - payment method: 0 - debit card 1 - credit card, cardNumbers - card numbers, cardName - card carrier name, cardExpirationDate - card expiration date: AAAA-MM-DD and card Cvv - card verification value (CVV)</param>
+    /// <response code="200">Create payment successfully</response>
     [HttpPost("payment")]
-    public IActionResult Payment(CreatePaymentDto createPaymentDto)
+    public async Task<ActionResult<Response<CreatePaymentDto>>> Payment(CreatePaymentDto createPaymentDto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        Response<CreatePaymentDto> response = new();
 
-        if (_paymentService.CreatePayment(createPaymentDto))
-            return NoContent();
-        else
-            return BadRequest();
+        if (!ModelState.IsValid)
+        {
+            response.Success = false;
+            response.Message = "Model state is invalid.";
+            response.Data = createPaymentDto;
+
+            return Ok(response);
+        }
+
+        response = await _paymentService.CreatePayment(createPaymentDto);
+
+        return Ok(response);
     }
 }

@@ -4,6 +4,6 @@ namespace payment_service_provider.Data.Repositories;
 
 public interface ITransactionRepository
 {
-    bool Create(Transaction transaction);
-    IEnumerable<Transaction> ListAll();
+    Task<int> Create(Transaction transaction);
+    Task<IEnumerable<Transaction>> ListAll();
 }

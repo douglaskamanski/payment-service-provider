@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using payment_service_provider.Dtos;
+using payment_service_provider.Models;
 using payment_service_provider.Services;
 
 namespace payment_service_provider.Controllers;
@@ -21,8 +22,10 @@ public class TransactionController : ControllerBase
     /// <returns>List of transactions with Value, Description, PaymentMethod, CardLastFourDigits, CardName, CardExpirationDate, CardCvv and CreatedDate</returns>
     /// <response code="200">Successfully listed</response>
     [HttpGet("list-all-transactions")]
-    public ActionResult<IEnumerable<ReadTransactionDto>> ListAllTransactions()
+    public async Task<ActionResult<Response<IEnumerable<ReadTransactionDto>>>> ListAllTransactions()
     {
-        return Ok(_transactionService.ListAllTransactions());
+        var response = await _transactionService.ListAllTransactions();
+
+        return Ok(response);
     }
 }
