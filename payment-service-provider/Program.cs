@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using payment_service_provider.Data;
 using payment_service_provider.Data.Repositories;
@@ -23,6 +24,19 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(conn
 // Add AutoMapper configuration
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+// CORS configuration
+var AllowSpecOrigins = "AllowSpecOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: AllowSpecOrigins, policy =>
+    {
+        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+              .WithMethods("GET", "POST")
+              .WithHeaders(HeaderNames.ContentType, "Access-Control-Allow-Headers");
+    });
+});
+
 // Add services to the container.
 builder.Services.AddControllers();
 
@@ -46,6 +60,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(AllowSpecOrigins);
 
 app.UseAuthorization();
 
