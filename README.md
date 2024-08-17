@@ -1,6 +1,6 @@
 ### Objetivos <h3>
 Esse projeto tem o objetivo principal de servir como portfólio para demonstrar o uso da linguagem C# com framework ASP.NET Core, seus pacotes e ferramentas.<p>
-Também tem o intuito de estudo, desenvolvimento profissional e registro de minha envolução utilizando essas tecnologias. <p>
+Também tem o intuito de estudo, desenvolvimento profissional e registro de minha evolução utilizando essas tecnologias. <p>
 ### Descrição do projeto <h3>
 É um desafio back-end da Pagar.me, versão super simplificada de um serviço de pagamento (Payment Service Provider), originalmente proposto para ser desenvolvido em Node.js. A descrição na íntegra pode ser encontrada <a href="https://github.com/pagarme/vagas/blob/master/desafios/software-engineer-backend/README.md">aqui</a>.
 <br>
